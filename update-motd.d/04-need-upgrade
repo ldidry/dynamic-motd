@@ -1,0 +1,10 @@
+#!/bin/bash
+
+. /etc/update-motd.d/colors
+
+n=$(apt-get -qq --just-print upgrade | cut -f 2 -d " " | sort -u | wc -l)
+if [[ $n -gt 0 ]]; then
+    printf $LIGHT_RED
+    printf "  You have %s packages waiting for upgrades." "$n"
+    printf $NONE"\n\n"
+fi

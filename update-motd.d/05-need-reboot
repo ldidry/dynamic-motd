@@ -1,0 +1,13 @@
+#!/bin/bash
+
+. /etc/update-motd.d/colors
+
+if [[ -x /usr/sbin/needrestart ]]; then
+    n=$(DEBIAN_FRONTEND=noninteractive echo "" | needrestart -k -v -n 2>/dev/null | grep -c "Pending kernel upgrade\!")
+    if [[ $n -gt 0 ]]; then
+        printf $LIGHT_RED
+        printf "  Pending kernel upgrade! "
+        printf $NONE
+        printf "You should consider rebooting your machine.\n\n"
+    fi
+fi

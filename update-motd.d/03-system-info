@@ -1,0 +1,17 @@
+#!/bin/sh
+
+. /etc/update-motd.d/colors
+
+cores=$(grep -c ^processor /proc/cpuinfo 2>/dev/null)
+[ "$cores" -eq "0" ] && cores=1
+threshold="${cores:-1}.0"
+
+echo
+
+if [ $(echo "`cut -f1 -d ' ' /proc/loadavg` < $threshold" | bc) -eq 1 ]; then
+    python /etc/update-motd.d/sysinfo.py
+else
+    echo " System information disabled due to load higher than $threshold"
+fi
+
+printf "\n"
