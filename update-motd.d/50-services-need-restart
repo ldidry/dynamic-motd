@@ -1,0 +1,13 @@
+#!/bin/bash
+
+. /etc/update-motd.d/colors
+
+if [[ -x /usr/sbin/needrestart ]]; then
+    n=$(needrestart -l -v -n -r l 2>/dev/null | grep -c "Skipping")
+    if [[ $n -gt 0 ]]; then
+        printf $LIGHT_RED
+        printf "  %s services need to be restarted.\n" $n
+        printf $NONE
+        printf "  Use needrestart to list and restart them.\n\n"
+    fi
+fi
