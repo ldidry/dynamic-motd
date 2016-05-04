@@ -14,7 +14,7 @@ symbolic-motd:
     - name: /etc/motd
     - target: /var/run/motd
     - force: True
-    - backupname: Truek
+    - backupname: bak
 dynamic-motd:
   file.recurse:
     - name: /etc/update-motd.d/
