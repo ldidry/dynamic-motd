@@ -4,8 +4,11 @@ motd-packages:
       - figlet
       - lsb-release
       - python-utmp
-      - needrestart
       - bc
+needrestart:
+  pkg.installed:
+    - pkgs:
+      - needrestart
 symbolic-motd:
   file.symlink:
     - name: /etc/motd
