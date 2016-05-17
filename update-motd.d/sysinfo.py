@@ -47,9 +47,21 @@ def proc_mount():
       items[a[1]] = "%.1f%% of %.2fGB" % (perc, gb)
   return items
 
+def inode_proc_mount():
+  items = {}
+  for m in open('/proc/mounts').readlines():
+    a = m.split()
+    if a[0].find('/dev/') is 0:
+      statfs = os.statvfs(a[1])
+      perc = 100-100.*statfs.f_ffree/statfs.f_files
+      iTotal = statfs.f_files
+      items[a[1]] = "%.1f%% of %.2d" % (perc, iTotal)
+  return items
+
 loadav = float(open("/proc/loadavg").read().split()[1])
 processes = len(glob.glob('/proc/[0-9]*'))
 statfs = proc_mount()
+iStatfs = inode_proc_mount()
 users = utmp_count()
 meminfo = proc_meminfo()
 memperc = "%d%%" % (100-100.*meminfo['MemFree:']/(meminfo['MemTotal:'] or 1))
@@ -61,8 +73,14 @@ print "  System information as of %s\n" % time.asctime()
 print "  System load:  %-5.2f                Processes:           %d" % (loadav, processes)
 print "  Memory usage: %-4s                 Users logged in:     %d" % (memperc, users)
 print "  Swap usage:   %s" % (swapperc)
+
+print "  Disk Usage:"
 for k in sorted(statfs.keys()):
-  print "  Usage of %-24s: %-20s" % (k, statfs[k])
+  print "    Usage of %-24s: %-20s" % (k, statfs[k])
+
+print "  Inode Usage:"
+for l in sorted(iStatfs.keys()):
+  print "    Usage of %-24s: %-20s" % (l, iStatfs[l])
 
 if users > 0:
     a = utmp.UtmpRecord()
