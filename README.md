@@ -20,9 +20,14 @@ Example:
   System load:  2.74                 Processes:           167
   Memory usage: 98%                  Users logged in:     1
   Swap usage:   31%
-  Usage of /                       : 40.6% of 23.71GB
-  Usage of /boot                   : 17.0% of 0.44GB
-  Usage of /mnt                    : 73.2% of 1863.01GB
+  Disk Usage:
+    Usage of /                       : 37.0% of 19.18GB
+    Usage of /boot                   : 36.6% of 0.11GB
+    Usage of /home                   : 11.1% of 501.60GB
+  Inode Usage:
+    Usage of /                       : 12.7% of 1286144
+    Usage of /boot                   : 1.1% of 31232
+    Usage of /home                   : 0.1% of 33406976
 
   Logged in users:
   user       from laptop.example.org        at Fri Apr 22 09:09:09 2016
