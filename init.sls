@@ -5,6 +5,7 @@ motd-packages:
       - lsb-release
       - python-utmp
       - bc
+      - debian-goodies
 needrestart:
   pkg.installed:
     - pkgs:
