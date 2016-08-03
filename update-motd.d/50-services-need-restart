@@ -10,7 +10,7 @@ if [[ -x /usr/sbin/checkrestart ]]; then
             printf $LIGHT_RED
             printf "  %s services need to be restarted.\n" "${BASH_REMATCH[1]}"
             printf $NONE
-            printf "  Use needrestart to list and restart them.\n\n"
+            printf "  Use checkrestart to list and restart them.\n\n"
         fi
     fi
 elif [[ -x /usr/sbin/needrestart ]]; then
