@@ -64,7 +64,7 @@ statfs = proc_mount()
 iStatfs = inode_proc_mount()
 users = utmp_count()
 meminfo = proc_meminfo()
-memperc = "%d%%" % (100-100.*meminfo['MemFree:']/(meminfo['MemTotal:'] or 1))
+memperc = "%d%%" % (100-100.*meminfo['MemAvailable:']/(meminfo['MemTotal:'] or 1))
 swapperc = "%d%%" % (100-100.*meminfo['SwapFree:']/(meminfo['SwapTotal:'] or 1))
 
 if meminfo['SwapTotal:'] == 0: swapperc = '---'
