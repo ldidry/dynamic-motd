@@ -2,14 +2,12 @@
 
 . /etc/update-motd.d/colors
 
-n=$(printf $NEED_UPGRADE)
-if [[ $n -gt 0 ]]; then
+if [[ $MOTD_NEED_UPGRADE -gt 0 ]]; then
     printf $LIGHT_RED
     printf "  You have %s packages waiting for upgrades." "$n"
     printf $NONE"\n\n"
 fi
-n=$(printf $NOT_NEEDED)
-if [[ $n -gt 0 ]]; then
+if [[ $MOTD_NOT_NEEDED -gt 0 ]]; then
     printf $YELLOW
     printf "  You have %s packages that were automatically installed and are not needed anymore." "$n"
     printf $NONE"\n\n"
