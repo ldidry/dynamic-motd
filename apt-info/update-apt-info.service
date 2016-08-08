@@ -1,0 +1,9 @@
+[Unit]
+Description=Update APT informations for "dynamic-motd"
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/local/bin/update-apt-info.sh
+
+[Install]
+WantedBy=multi-user.target

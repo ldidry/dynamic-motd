@@ -1,0 +1,10 @@
+[Unit]
+Description=Update APT informations for "dynamic-motd"
+
+[Timer]
+OnCalendar=0/3:00:00
+Persistent=true
+Unit=update-apt-info.service
+
+[Install]
+WantedBy=multi-user.target

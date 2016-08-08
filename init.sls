@@ -35,3 +35,17 @@ remove-exec-sysinfo:
   file.managed:
     - name: /etc/update-motd.d/sysinfo.py
     - mode: 644
+
+# We use a timer instead of a single command
+/etc/systemd/system/update-apt-info.timer:
+  file.managed:
+    - mode: 644
+    - source: salt://motd/apt-info/update-apt-info.timer
+/etc/systemd/system/update-apt-info.service:
+  file.managed:
+    - mode: 644
+    - source: salt://motd/apt-info/update-apt-info.service
+/usr/local/bin/update-apt-info.sh:
+  file.managed:
+    - mode: 744
+    - source: salt://motd/apt-info/update-apt-info.sh
