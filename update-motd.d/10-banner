@@ -19,7 +19,7 @@
 #    with this program; if not, write to the Free Software Foundation, Inc.,
 #    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-# Modified by Luc Didry in 2016
+# Modified by Luc Didry and Maxence Bothorel in 2016
 
 . /etc/update-motd.d/colors
 
