@@ -3,7 +3,7 @@
 . /etc/update-motd.d/colors
 
 if [[ -x /usr/sbin/checkrestart ]]; then
-    n=$(/usr/sbin/checkrestart | grep "Found .* processes using old versions of upgraded files")
+    n=$(/usr/sbin/checkrestart -p | grep "Found .* processes using old versions of upgraded files")
     re='Found (.*) processes using old versions of upgraded files'
     if [[ $n =~ $re ]]; then
         if [[ ${BASH_REMATCH[1]} -gt 0 ]]; then
