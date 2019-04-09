@@ -38,4 +38,4 @@ fi
 echo -e "  "$DISTRIB_DESCRIPTION "(kernel "$(uname -r)")\n"
 
 # Update the information for next time
-printf "DISTRIB_DESCRIPTION=%s" "$(lsb_release -s -d)" > /etc/update-motd.d/lsb-release &
+printf "DISTRIB_DESCRIPTION=\"%s\"" "$(lsb_release -s -d)" > /etc/update-motd.d/lsb-release &
