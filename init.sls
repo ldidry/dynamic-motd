@@ -3,7 +3,11 @@ motd-packages:
     - pkgs:
       - figlet
       - lsb-release
+{% if grains["oscodename"] == 'bullseye' %}
+      - python3-utmp
+{% else %}
       - python-utmp
+{% endif %}
       - bc
       - debian-goodies
 needrestart:
@@ -27,6 +31,16 @@ dynamic-motd:
     # been renumbered. Be careful! If you added some files of
     # yours, they will be deleted
     #- clean: True
+{% if grains["oscodename"] == 'bullseye' %}
+/etc/update-motd.d/20-system-info:
+  file.replace:
+    - pattern: 'python'
+    - repl: 'python3'
+/etc/update-motd.d/sysinfo.py:
+  file.replace:
+    - pattern: 'python'
+    - repl: 'python3'
+{% endif %}
 remove-exec-colors:
   file.managed:
     - name: /etc/update-motd.d/colors
