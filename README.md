@@ -52,7 +52,11 @@ If you don't install `needrestart`, it will work, but you won't be warned about 
 
 You can optionnally install `debian-goodies` which provides `checkrestart`, which will be used to warn you about services that need to be restarted. Relying on `needrestart` for that is slow (±7 seconds) while `checkrestart` do it faster (less than one second).
 
-**NB:** if you use Debian 11 Bullseye, install `python3-utmp` instead of `python-utmp` and change `python` to `python3` in `update-motd.d/20-system-info` and `update-motd.d/sysinfo.py`.
+**NB:** if you use Debian 11 Bullseye, install `python3-utmp` instead of `python-utmp` and change `python` to `python3` in `update-motd.d/20-system-info` and `update-motd.d/sysinfo.py`:
+
+```
+sed -e "s/python/python3/" -i update-motd.d/20-system-info update-motd.d/sysinfo.py
+```
 
 ## Installation
 
@@ -60,6 +64,15 @@ You can optionnally install `debian-goodies` which provides `checkrestart`, whic
 cp -r update-motd.d/ /etc
 rm /etc/motd
 ln -s /var/run/motd /etc/motd
+```
+
+## Disabling for some users
+
+Just create a `/etc/update-motd.d/hushlogin` file containing the names of the users, like:
+
+```
+alice
+bob
 ```
 
 ## Salt

@@ -1,5 +1,6 @@
 #!/bin/sh
 
+. /etc/update-motd.d/quiet
 . /etc/update-motd.d/colors
 
 cores=$(grep -c ^processor /proc/cpuinfo 2>/dev/null)

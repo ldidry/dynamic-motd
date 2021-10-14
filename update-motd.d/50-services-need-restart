@@ -1,5 +1,6 @@
 #!/bin/bash
 
+. /etc/update-motd.d/quiet
 . /etc/update-motd.d/colors
 
 if [[ -x /usr/sbin/checkrestart ]]; then

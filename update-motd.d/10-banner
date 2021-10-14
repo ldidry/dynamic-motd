@@ -21,6 +21,7 @@
 
 # Modified by Luc Didry in 2016
 
+. /etc/update-motd.d/quiet
 . /etc/update-motd.d/colors
 
 [ -r /etc/update-motd.d/lsb-release ] && . /etc/update-motd.d/lsb-release
