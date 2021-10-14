@@ -45,6 +45,10 @@ remove-exec-colors:
   file.managed:
     - name: /etc/update-motd.d/colors
     - mode: 644
+remove-exec-quiet:
+  file.managed:
+    - name: /etc/update-motd.d/quiet
+    - mode: 644
 remove-exec-sysinfo:
   file.managed:
     - name: /etc/update-motd.d/sysinfo.py
