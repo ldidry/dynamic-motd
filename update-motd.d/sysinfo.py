@@ -42,7 +42,7 @@ def proc_mount():
     a = m.split()
     if a[0].find('/dev/') == 0:
       statfs = os.statvfs(a[1])
-      perc = 100-100.*statfs.f_bavail/statfs.f_blocks
+      perc = 100-100.*statfs.f_bavail/statfs.f_blocks if statfs.f_blocks != 0 else 100
       gb = statfs.f_bsize*statfs.f_blocks/1024./1024/1024
       items[a[1]] = "%.1f%% of %.2fGB" % (perc, gb)
   return items
@@ -53,7 +53,7 @@ def inode_proc_mount():
     a = m.split()
     if a[0].find('/dev/') == 0:
       statfs = os.statvfs(a[1])
-      perc = 100-100.*statfs.f_ffree/statfs.f_files
+      perc = 100-100.*statfs.f_ffree/statfs.f_files if statfs.f_files != 0 else 100
       iTotal = statfs.f_files
       items[a[1]] = "%.1f%% of %.2d" % (perc, iTotal)
   return items
