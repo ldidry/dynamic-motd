@@ -38,7 +38,15 @@ Last login: Fri Apr 22 09:23:01 2016 from laptop.example.org
 
 **Warning** This is Debian and Debian-related distributions only.
 
-## Dependencies
+## Installation
+
+First, check out the repo (to a folder of your choice)
+```
+git clone https://github.com/ldidry/dynamic-motd.git
+cd dynamic-motd/
+```
+
+### Dependencies
 
 You need to install some packages:
 
@@ -58,8 +66,9 @@ You can optionnally install `debian-goodies` which provides `checkrestart`, whic
 sed -e "s/python/python3/" -i update-motd.d/20-system-info update-motd.d/sysinfo.py
 ```
 
-## Installation
+### Install to system
 
+(root shell)
 ```
 cp -r update-motd.d/ /etc
 rm /etc/motd
