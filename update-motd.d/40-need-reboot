@@ -1,14 +1,12 @@
-#!/bin/bash
+#!/bin/sh
 
-. /etc/update-motd.d/quiet
-. /etc/update-motd.d/colors
+CURRENT_DIR=$(dirname "$0")
+. "$CURRENT_DIR/quiet"
+. "$CURRENT_DIR/colors"
 
-if [[ -x /usr/sbin/needrestart ]]; then
-    n=$(DEBIAN_FRONTEND=noninteractive echo "" | /usr/sbin/needrestart -k -v -n 2>/dev/null | grep -c "Pending kernel upgrade\!")
-    if [[ $n -gt 0 ]]; then
-        printf $LIGHT_RED
-        printf "  Pending kernel upgrade! "
-        printf $NONE
-        printf "You should consider rebooting your machine.\n\n"
+if [ -x /usr/sbin/needrestart ]; then
+    n=$(DEBIAN_FRONTEND=noninteractive echo "" | /usr/sbin/needrestart -k -v -n 2> /dev/null | grep -c "Pending kernel upgrade\!")
+    if [ "$n" -gt 0 ]; then
+        printf "%b  Pending kernel upgrade! %bYou should consider rebooting your machine.\n\n" "$LIGHT_RED" "$NONE"
     fi
 fi

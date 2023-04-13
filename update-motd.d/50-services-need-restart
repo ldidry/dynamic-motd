@@ -1,25 +1,20 @@
 #!/bin/bash
 
-. /etc/update-motd.d/quiet
-. /etc/update-motd.d/colors
+CURRENT_DIR=$(dirname "$0")
+. "$CURRENT_DIR/quiet"
+. "$CURRENT_DIR/colors"
 
-if [[ -x /usr/sbin/checkrestart ]]; then
+if [ -x /usr/sbin/checkrestart ]; then
     n=$(/usr/sbin/checkrestart -p | grep "Found .* processes using old versions of upgraded files")
     re='Found (.*) processes using old versions of upgraded files'
     if [[ $n =~ $re ]]; then
-        if [[ ${BASH_REMATCH[1]} -gt 0 ]]; then
-            printf $LIGHT_RED
-            printf "  %s services need to be restarted.\n" "${BASH_REMATCH[1]}"
-            printf $NONE
-            printf "  Use checkrestart to list and restart them.\n\n"
+        if [ "${BASH_REMATCH[1]}" -gt 0 ]; then
+            printf "%b  %s services need to be restarted.%b\n  Use checkrestart to list and restart them.\n\n" "$LIGHT_RED" "${BASH_REMATCH[1]}" "$NONE"
         fi
     fi
-elif [[ -x /usr/sbin/needrestart ]]; then
-    n=$(/usr/sbin/needrestart -l -v -n -r l 2>/dev/null | grep -c "Skipping")
-    if [[ $n -gt 0 ]]; then
-        printf $LIGHT_RED
-        printf "  %s services need to be restarted.\n" $n
-        printf $NONE
-        printf "  Use needrestart to list and restart them.\n\n"
+elif [ -x /usr/sbin/needrestart ]; then
+    n=$(/usr/sbin/needrestart -l -v -n -r l 2> /dev/null | grep -c "Skipping")
+    if [ "$n" -gt 0 ]; then
+        printf "%b  %s services need to be restarted.%b\n  Use needrestart to list and restart them.\n\n" "$LIGHT_RED" "$n" "$NONE"
     fi
 fi

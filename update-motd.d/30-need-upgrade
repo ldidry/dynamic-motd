@@ -1,17 +1,14 @@
 #!/bin/bash
 
-. /etc/update-motd.d/quiet
-. /etc/update-motd.d/colors
+CURRENT_DIR=$(dirname "$0")
+. "$CURRENT_DIR/quiet"
+. "$CURRENT_DIR/colors"
 
 n=$(apt-get -qq --just-print dist-upgrade | cut -f 2 -d " " | sort -u | wc -l)
 if [[ $n -gt 0 ]]; then
-    printf $LIGHT_RED
-    printf "  You have %s packages waiting for upgrades." "$n"
-    printf $NONE"\n\n"
+    printf "%b  You have %s packages waiting for upgrades.%b\n\n" "$LIGHT_RED" "$n" "$NONE"
 fi
 n=$(apt-get -qq --just-print autoremove | cut -f 2 -d " " | sort -u | wc -l)
-if [[ $n -gt 0 ]]; then
-    printf $YELLOW
-    printf "  You have %s packages that were automatically installed and are not needed anymore." "$n"
-    printf $NONE"\n\n"
+if [ "$n" -gt 0 ]; then
+    printf "%b  You have %s packages that were automatically installed and are not needed anymore.%b\n\n" "$YELLOW" "$n" "$NONE"
 fi

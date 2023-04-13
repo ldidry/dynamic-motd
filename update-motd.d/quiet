@@ -1,7 +1,8 @@
-for i in $(cat /etc/update-motd.d/hushlogin)
-do
-    if [ $(cat /proc/self/loginuid) -eq $(id -u $i) ]
-    then
-        exit
-    fi
-done
+# vim: set ft=sh:
+if [ -e /etc/update-motd.d/hushlogin ]; then
+    while read -r i; do
+        if [ "$(cat /proc/self/loginuid)" -eq "$(id -u "$i")" ]; then
+            exit
+        fi
+    done < /etc/update-motd.d/hushlogin
+fi
