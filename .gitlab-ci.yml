@@ -1,0 +1,91 @@
+---
+stages:
+  - lint
+  - build-package
+
+shellcheck:
+  image: koalaman/shellcheck-alpine:stable
+  stage: lint
+  script:
+    - cd update-motd.d/
+    - touch lsb-release
+    - |
+      shellcheck -x 00-figlet \
+                    10-banner \
+                    20-system-info \
+                    30-need-upgrade \
+                    40-need-reboot \
+                    50-services-need-restart
+    - |
+      shellcheck -s dash \
+                    colors \
+                    quiet
+    - rm lsb-release
+    - cd ../DEBIAN/
+    - |
+      shellcheck postinst \
+                 postrm
+
+
+build:
+  image: hatsoftwares/preseed-creator-build:latest
+  stage: build-package
+  before_script:
+    - mkdir -p ~/.minisign
+    - chmod 700 ~/.minisign
+    - "echo 'untrusted comment: minisign encrypted secret key' \
+          > ~/.minisign/minisign.key"
+    - echo $MINISIG_KEY >> ~/.minisign/minisign.key
+    - chmod 600 ~/.minisign/minisign.key
+  script:
+    - make deb
+    - mv dynamic-motd.deb dynamic-motd_${CI_COMMIT_TAG}.deb
+    - echo $MINISIG_PWD | minisign -Sm dynamic-motd_${CI_COMMIT_TAG}.deb
+    - ls dynamic-motd_${CI_COMMIT_TAG}.deb*
+    - |
+      curl --silent \
+           --show-error \
+           --user "$NC_USER:$NC_PWD" \
+           --upload-file dynamic-motd_${CI_COMMIT_TAG}.deb \
+           "$NC_URL"
+    - |
+      curl --silent \
+           --show-error \
+           --user "$NC_USER:$NC_PWD" \
+           --upload-file dynamic-motd_${CI_COMMIT_TAG}.deb.minisig \
+           "$NC_URL"
+  needs:
+    - shellcheck
+  only:
+    variables:
+      - $MINISIG_KEY
+      - $MINISIG_PWD
+      - $NC_DL_URL
+      - $NC_PWD
+      - $NC_URL
+      - $NC_USER
+    refs:
+      - tags
+  release:
+    tag_name: $CI_COMMIT_TAG
+    name: $CI_COMMIT_TAG
+    description: |
+      \### Changelog
+
+      `sed -n '/^'$CI_COMMIT_TAG'[[:space:]]/,/^[^\t]/p' CHANGELOG | sed -e 's/^[^\t].*//' -e 's/\t//g' | sed '/^[[:space:]]*$/d'`
+
+      \### Installation
+
+      Download the release and signature files then
+      \`\`\`bash
+      minisign -Vm dynamic-motd_${CI_COMMIT_TAG}.deb -P RWQm7sZSguNVtitOiU4ozG+HgWWyUz4KmB0NMhjuTYkMardZlXjsKWLk &&
+        sudo apt install ./dynamic-motd_${CI_COMMIT_TAG}.deb
+      \`\`\`
+    assets:
+      links:
+        - name: 'Debian package'
+          url: "${NC_DL_URL}dynamic-motd_${CI_COMMIT_TAG}.deb"
+          link_type: package
+        - name: 'Minisign signature of the debian package'
+          url: "${NC_DL_URL}dynamic-motd_${CI_COMMIT_TAG}.deb.minisig"
+          link_type: other

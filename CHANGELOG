@@ -1,0 +1,16 @@
+Revision history for dynamic-motd
+
+0.05 ????-??-??
+	- Use python3
+	- Format scripts with shftmt
+	- Use linting on scripts (shellcheck, pylint, mypy)
+	- Create a debian package in CI
+
+0.04 2016-08-02
+	- Allow to use checkrestart instead of needrestart for services
+
+0.03 2016-07-29
+	- Fix bug
+
+0.02 2016-05-04
+	- First tagged release

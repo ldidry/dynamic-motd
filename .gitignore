@@ -1,0 +1,3 @@
+*.swp
+*.deb
+update-motd.d/lsb-release
