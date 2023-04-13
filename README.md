@@ -12,14 +12,14 @@ Example:
   |___/\___|_|    \_/ \___|_|
 
 
-  Debian GNU/Linux 8.4 (jessie) (kernel 3.16.0-4-amd64)
+  Debian GNU/Linux 12 (bookworm) (kernel 6.1.0-7-amd64)
 
 
-  System information as of Fri Apr 22 10:02:57 2016
+  System information as of Thu Apr 13 08:43:28 2023
 
-  System load:  2.74                 Processes:           167
-  Memory usage: 98%                  Users logged in:     1
-  Swap usage:   31%
+  System load:  2.84                 Processes:           338
+  Memory usage: 81.69%               Users logged in:     1
+  Swap usage:   21.34%
   Disk Usage:
     Usage of /                       : 37.0% of 19.18GB
     Usage of /boot                   : 36.6% of 0.11GB
@@ -30,20 +30,32 @@ Example:
     Usage of /home                   : 0.1% of 33406976
 
   Logged in users:
-  user       from laptop.example.org        at Fri Apr 22 09:09:09 2016
+  user       from laptop.example.org        at Mon Apr  3 09:28:01 2023
 
 No mail.
-Last login: Fri Apr 22 09:23:01 2016 from laptop.example.org
+Last login: Mon Apr  3 07:28:01 2023 from laptop.example.org
 ```
 
 **Warning** This is Debian and Debian-related distributions only.
 
-## Dependencies
+## Installation
+
+### Debian package
+
+Go to <https://framagit.org/luc/dynamic-motd/-/releases/permalink/latest>, download the Debian package and its signature file.
+
+Check the signature of the Debian package and install the package:
+```bash
+minisign -Vm dynamic-motd_*.deb -P RWRzxrp04vb4Db3sle7Az6kSeCipT1ixRjRZPXdUUQuuwgi9UW81E+dx &&
+sudo apt install ./dynamic-motd_*.deb
+```
+
+### Manual installation
 
 You need to install some packages:
 
 ```
-apt-get install figlet lsb-release python-utmp bc
+apt-get install figlet lsb-release python3-utmp bc
 ```
 
 Optionnally, you can install `needrestart` which is used to show a message if your server need a reboot (main reason (and the only one I know): you have upgraded your kernel).
@@ -52,13 +64,7 @@ If you don't install `needrestart`, it will work, but you won't be warned about 
 
 You can optionnally install `debian-goodies` which provides `checkrestart`, which will be used to warn you about services that need to be restarted. Relying on `needrestart` for that is slow (±7 seconds) while `checkrestart` do it faster (less than one second).
 
-**NB:** if you use Debian 11 Bullseye, install `python3-utmp` instead of `python-utmp` and change `python` to `python3` in `update-motd.d/20-system-info` and `update-motd.d/sysinfo.py`:
-
-```
-sed -e "s/python/python3/" -i update-motd.d/20-system-info update-motd.d/sysinfo.py
-```
-
-## Installation
+Then:
 
 ```
 cp -r update-motd.d/ /etc

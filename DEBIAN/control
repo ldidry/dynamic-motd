@@ -1,0 +1,12 @@
+Package: dynamic-motd
+Version: LAST_TAG
+Sections: utils
+Priority: Optional
+Architecture: all
+Maintainer: Luc Didry <deb@didry.org>
+Description: Give some informations when you log into a server through SSH.
+Homepage: https://framagit.org/luc/dynamic-motd
+Package-Type: deb
+Depends: figlet, python3-utmp, lsb-release, bc
+Recommends: debian-goodies
+Suggests: needrestart
