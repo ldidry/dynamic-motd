@@ -78,7 +78,7 @@ build:
 
       Download the release and signature files then
       \`\`\`bash
-      minisign -Vm dynamic-motd_${CI_COMMIT_TAG}.deb -P RWQm7sZSguNVtitOiU4ozG+HgWWyUz4KmB0NMhjuTYkMardZlXjsKWLk &&
+      minisign -Vm dynamic-motd_${CI_COMMIT_TAG}.deb -P RWRzxrp04vb4Db3sle7Az6kSeCipT1ixRjRZPXdUUQuuwgi9UW81E+dx &&
         sudo apt install ./dynamic-motd_${CI_COMMIT_TAG}.deb
       \`\`\`
     assets:
