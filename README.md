@@ -46,7 +46,7 @@ You need to install some packages:
 apt-get install figlet lsb-release python-utmp bc
 ```
 
-Optionnally, you can install `needrestart` which is used to show a message if your server need a reboot (main reason (and the only one I know): you have upgraded your kernel).
+Optionally, you can install `needrestart` which is used to show a message if your server need a reboot (main reason (and the only one I know): you have upgraded your kernel).
 If you don't install `needrestart`, it will work, but you won't be warned about the need for a reboot.
 `needrestart` warns you about services that need to be restarted too (but is slower than `checkrestart` for that, see below).
 
