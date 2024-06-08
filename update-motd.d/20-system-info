@@ -4,7 +4,7 @@ CURRENT_DIR=$(dirname "$0")
 . "$CURRENT_DIR/quiet"
 . "$CURRENT_DIR/colors"
 
-cores=$(grep -c ^processor /proc/cpuinfo 2> /dev/null)
+cores=$(grep -c ^processor /proc/cpuinfo 2>/dev/null)
 [ "$cores" -eq "0" ] && cores=1
 threshold="${cores:-1}.0"
 
