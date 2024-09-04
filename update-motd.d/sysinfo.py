@@ -112,49 +112,53 @@ def get_filesystems():
     return filesystems
 
 
-loadav = float(open("/proc/loadavg").read().split()[1])
-processes = len(glob.glob("/proc/[0-9]*"))
-ip_addr = dev_addr(default_dev())
-filesystems = get_filesystems()
-users = get_users()
-meminfo = proc_meminfo()
-memperc = "%d%%" % (
-    100 - 100.0 * meminfo["MemAvailable:"] / (meminfo["MemTotal:"] or 1)
-)
-swapperc = "%d%%" % (100 - 100.0 * meminfo["SwapFree:"] / (meminfo["SwapTotal:"] or 1))
+def main():
 
-if meminfo["SwapTotal:"] == 0:
-    swapperc = "---"
+    loadav = float(open("/proc/loadavg").read().split()[1])
+    processes = len(glob.glob("/proc/[0-9]*"))
+    meminfo = proc_meminfo()
+    filesystems = get_filesystems()
+    ip_addr = dev_addr(default_dev())
+    memperc = "%d%%" % (
+        100 - 100.0 * meminfo["MemAvailable:"] / (meminfo["MemTotal:"] or 1)
+    )
+    swapperc = "%d%%" % (
+        100 - 100.0 * meminfo["SwapFree:"] / (meminfo["SwapTotal:"] or 1)
+    )
+    users = get_users()
 
-print(
-    """
+    if meminfo["SwapTotal:"] == 0:
+        swapperc = "---"
+
+    print(
+        """
 System information as of %s on %s
 """
-    % (time.asctime(), ip_addr)
-)
-print(
-    "  System load:  %-5.2f                Processes:           %d"
-    % (loadav, processes)
-)
-print("  Memory usage: %-4s                 Users logged in:     %d" % (memperc, users))
-print("  Swap usage:   %s" % (swapperc))
-
-print("System load:  %-5.2f                Processes:    %d" % (loadav, processes))
-print("Memory usage: %-4s                 Swap usage:   %s" % (memperc, swapperc))
-
-print(
-    """
-  Mount points          Disk usage        Inodes usage"""
-)
-
-for f in filesystems:
-    print(" %-21s %-4s of %-9s %s" % (f["target"], f["use%"], f["size"], f["inodes%"]))
-
-if users != "":
-    print(
-        f"""
-   Logged in users: {users}
-"""
+        % (time.asctime(), ip_addr)
     )
 
-sys.exit(0)
+    print("System load:  %-5.2f                Processes:    %d" % (loadav, processes))
+    print("Memory usage: %-4s                 Swap usage:   %s" % (memperc, swapperc))
+
+    print(
+        """
+  Mount points          Disk usage        Inodes usage"""
+    )
+
+    for f in filesystems:
+        print(
+            " %-21s %-4s of %-9s %s" % (f["target"], f["use%"], f["size"], f["inodes%"])
+        )
+
+    if users != "":
+        print(
+            f"""
+  Logged in users: {users}
+"""
+        )
+
+    sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()
