@@ -17,6 +17,7 @@
 # handling, change spacing, restore ip address.
 
 import glob
+import json
 import os
 import subprocess
 import sys
@@ -72,43 +73,49 @@ def proc_meminfo():
     return items
 
 
-def proc_mount():
-    items = {}
-    for m in open("/proc/mounts").readlines():
-        a = m.split()
-        if a[0].find("/dev/") == 0:
-            statfs = os.statvfs(a[1])
+def get_filesystems():
+    # Only using fstab values to filter the mess that can be containerisation or bind mounts.
+    filesystems = json.loads(
+        subprocess.check_output(
+            [
+                "findmnt",
+                "--noheading",
+                "--real",
+                "--uniq",
+                "--fstab",
+                "--json",
+                "--types",
+                "notmpfs,noswap",
+                "--df",
+            ]
+        )
+    ).get("filesystems")
+
+    for f in filesystems:
+        try:
+            statfs = os.statvfs(f["target"])
+
             perc = (
-                100 - 100.0 * statfs.f_bavail / statfs.f_blocks
+                100 - 100.0 * statfs.f_ffree / statfs.f_files
                 if statfs.f_blocks != 0
                 else 100
             )
-            gb = statfs.f_bsize * statfs.f_blocks / 1024.0 / 1024 / 1024
-            items[a[1]] = "%.1f%% of %.2fGB" % (perc, gb)
-    return items
-
-
-def inode_proc_mount():
-    items = {}
-    for m in open("/proc/mounts").readlines():
-        a = m.split()
-        if a[0].find("/dev/") == 0:
-            statfs = os.statvfs(a[1])
-            perc = (
-                100 - 100.0 * statfs.f_ffree / statfs.f_files
-                if statfs.f_files != 0
-                else 100
-            )
             iTotal = statfs.f_files
-            items[a[1]] = "%.1f%% of %.2d" % (perc, iTotal)
-    return items
+            f["inodes%"] = "%.1f%% of %.2d" % (perc, iTotal)
+        except PermissionError:
+            f["inodes%"] = "Permission Denied"
+        except FileNotFoundError:
+            f["inodes%"] = "File not found"
+        except ZeroDivisionError:
+            f["inodes%"] = "Not available"
+
+    return filesystems
 
 
 loadav = float(open("/proc/loadavg").read().split()[1])
 processes = len(glob.glob("/proc/[0-9]*"))
 ip_addr = dev_addr(default_dev())
-statfs = proc_mount()
-iStatfs = inode_proc_mount()
+filesystems = get_filesystems()
 users = get_users()
 meminfo = proc_meminfo()
 memperc = "%d%%" % (
@@ -132,19 +139,22 @@ print(
 print("  Memory usage: %-4s                 Users logged in:     %d" % (memperc, users))
 print("  Swap usage:   %s" % (swapperc))
 
-print("  Disk Usage:")
-for k in sorted(statfs.keys()):
-    print("    Usage of %-24s: %-20s" % (k, statfs[k]))
+print("System load:  %-5.2f                Processes:    %d" % (loadav, processes))
+print("Memory usage: %-4s                 Swap usage:   %s" % (memperc, swapperc))
 
-print("  Inode Usage:")
-for l in sorted(iStatfs.keys()):
-    print("    Usage of %-24s: %-20s" % (l, iStatfs[l]))
+print(
+    """
+  Mount points          Disk usage        Inodes usage"""
+)
 
-    if users != "":
-        print(
-            f"""
+for f in filesystems:
+    print(" %-21s %-4s of %-9s %s" % (f["target"], f["use%"], f["size"], f["inodes%"]))
+
+if users != "":
+    print(
+        f"""
    Logged in users: {users}
 """
-        )
+    )
 
 sys.exit(0)
