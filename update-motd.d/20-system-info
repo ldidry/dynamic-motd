@@ -10,7 +10,7 @@ threshold="${cores:-1}.0"
 echo
 
 if [ $(echo "`cut -f1 -d ' ' /proc/loadavg` < $threshold" | bc) -eq 1 ]; then
-    python /etc/update-motd.d/sysinfo.py
+    python3 /etc/update-motd.d/sysinfo.py
 else
     echo " System information disabled due to load higher than $threshold"
 fi
