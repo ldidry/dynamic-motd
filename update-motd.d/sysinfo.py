@@ -3,18 +3,18 @@
 # landscape-sysinfo-mini.py -- a trivial re-implementation of the
 # sysinfo printout shown on debian at boot time. No twisted, no reactor, just /proc & utmp
 #
-# (C) 2014 jw@owncloud.com
+# (C) 2014 jw@owncloud.com https://github.com/jnweiger/landscape-sysinfo-mini
+# (C) 2016 Luc Didry https://github.com/ldidry/dynamic-motd/blob/master/update-motd.d/sysinfo.py
+# (C) 2024 seven-beep@entreparentheses.xyz
 #
 # inspired by ubuntu 14.10 /etc/update-motd.d/50-landscape-sysinfo
-# Requires: python-utmp
-# for counting users.
 #
-# 2014-09-07 V1.0 jw, ad hoc writeup, feature-complete. Probably buggy?
-# 2014-10-08 V1.1 jw, survive without swap
-# 2014-10-13 V1.2 jw, survive without network
-
-# Modified by Luc Didry in 2016
-# Get the original version at https://github.com/jnweiger/landscape-sysinfo-mini
+# 2014-09-07 V1.0 -- jw, ad hoc writeup, feature-complete. Probably buggy?
+# 2014-10-08 V1.1 -- jw, survive without swap
+# 2014-10-13 V1.2 -- jw, survive without network
+# 2016            -- Luc Didry
+# 2024-09-04 V1.3 -- 7b, remove dependance on utmp, rework disk usage, add error
+# handling, change spacing, restore ip address.
 
 import glob
 import os
