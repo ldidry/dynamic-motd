@@ -23,6 +23,28 @@ import sys
 import time
 
 
+def dev_addr(device):
+    """find the local ip address on the given device"""
+    if device is None:
+        return None
+    for l in os.popen("ip route list dev " + device):
+        seen = ""
+        for a in l.split():
+            if seen == "src":
+                return a
+            seen = a
+    return None
+
+
+def default_dev():
+    """find the device where our default route is"""
+    for l in open("/proc/net/route").readlines():
+        a = l.split()
+        if a[1] == "00000000":
+            return a[0]
+    return None
+
+
 def get_users():
     # Run the who command and capture its output
     who_output_list = subprocess.check_output(["who"]).decode("utf-8").split("\n")
@@ -84,6 +106,7 @@ def inode_proc_mount():
 
 loadav = float(open("/proc/loadavg").read().split()[1])
 processes = len(glob.glob("/proc/[0-9]*"))
+ip_addr = dev_addr(default_dev())
 statfs = proc_mount()
 iStatfs = inode_proc_mount()
 users = get_users()
@@ -96,7 +119,12 @@ swapperc = "%d%%" % (100 - 100.0 * meminfo["SwapFree:"] / (meminfo["SwapTotal:"]
 if meminfo["SwapTotal:"] == 0:
     swapperc = "---"
 
-print("  System information as of %s\n" % time.asctime())
+print(
+    """
+System information as of %s on %s
+"""
+    % (time.asctime(), ip_addr)
+)
 print(
     "  System load:  %-5.2f                Processes:           %d"
     % (loadav, processes)
