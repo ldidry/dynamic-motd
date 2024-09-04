@@ -25,6 +25,28 @@ import sys
 import time
 
 
+def dev_addr(device):
+    """find the local ip address on the given device"""
+    if device is None:
+        return None
+    for l in os.popen("ip route list dev " + device):
+        seen = ""
+        for a in l.split():
+            if seen == "src":
+                return a
+            seen = a
+    return None
+
+
+def default_dev():
+    """find the device where our default route is"""
+    for l in open("/proc/net/route").readlines():
+        a = l.split()
+        if a[1] == "00000000":
+            return a[0]
+    return None
+
+
 def get_users():
     # Run the who command and capture its output
     who_output_list = subprocess.check_output(["who"]).decode("utf-8").split("\n")
@@ -80,9 +102,14 @@ def inode_proc_mount():
             items[array[1]] = f"{perc:5.1f}% of {i_total}"
     return items
 
+<<<<<<< HEAD
 with open("/proc/loadavg", encoding="ASCII") as avg_line:
     loadav = float(avg_line.read().split()[1])
 processes = len(glob.glob('/proc/[0-9]*'))
+=======
+
+ip_addr = dev_addr(default_dev())
+>>>>>>> 5fa57c4 (Restore ip address)
 statfs = proc_mount()
 i_statfs = inode_proc_mount()
 users = get_users()
@@ -93,10 +120,19 @@ SWAPPERC = f"{100 - 100. * meminfo['SwapFree:'] / (meminfo['SwapTotal:'] or 1):.
 if meminfo['SwapTotal:'] == 0:
     SWAPPERC = '---'
 
+<<<<<<< HEAD
 print(f"  System information as of {time.asctime()}\n")
 print(f"  System load:  {loadav: <5.2f}                Processes:           {processes}")
 print(f"  Memory usage: {memperc: <4}               Users logged in:     {USERS}")
 print(f"  Swap usage:   {SWAPPERC}")
+=======
+print(
+    """
+System information as of %s on %s
+"""
+    % (time.asctime(), ip_addr)
+)
+>>>>>>> 5fa57c4 (Restore ip address)
 
 print("  Disk Usage:")
 for k in sorted(statfs.keys()):
