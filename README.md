@@ -43,7 +43,7 @@ Last login: Fri Apr 22 09:23:01 2016 from laptop.example.org
 You need to install some packages:
 
 ```
-apt-get install figlet lsb-release python-utmp bc
+apt-get install figlet lsb-release bc
 ```
 
 Optionnally, you can install `needrestart` which is used to show a message if your server need a reboot (main reason (and the only one I know): you have upgraded your kernel).

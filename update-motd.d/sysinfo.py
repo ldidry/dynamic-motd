@@ -18,23 +18,27 @@
 
 import glob
 import os
-import posix
+import subprocess
 import sys
 import time
 
-import utmp
-from UTMPCONST import *
 
-_version_ = "1.2"
+def get_users():
+    # Run the who command and capture its output
+    who_output_list = subprocess.check_output(["who"]).decode("utf-8").split("\n")
+    # Create a set to store unique usernames
+    unique_users = set()
 
+    # Iterate through each line and extract usernames
+    for line in who_output_list:
+        line_list = line.split()
+        if bool(line_list):
+            unique_users.add(line_list[0])
 
-def utmp_count():
-    u = utmp.UtmpRecord()
-    users = 0
-    for i in u:
-        if i.ut_type == utmp.USER_PROCESS:
-            users += 1
-    return users
+    # Join the unique usernames into a single string separated by commas
+    result = ", ".join(unique_users)
+
+    return result
 
 
 def proc_meminfo():
@@ -82,7 +86,7 @@ loadav = float(open("/proc/loadavg").read().split()[1])
 processes = len(glob.glob("/proc/[0-9]*"))
 statfs = proc_mount()
 iStatfs = inode_proc_mount()
-users = utmp_count()
+users = get_users()
 meminfo = proc_meminfo()
 memperc = "%d%%" % (
     100 - 100.0 * meminfo["MemAvailable:"] / (meminfo["MemTotal:"] or 1)
@@ -108,17 +112,11 @@ print("  Inode Usage:")
 for l in sorted(iStatfs.keys()):
     print("    Usage of %-24s: %-20s" % (l, iStatfs[l]))
 
-if users > 0:
-    a = utmp.UtmpRecord()
-
-    print("\n  Logged in users:")
-
-    for b in a:  # example of using an iterator
-        if b.ut_type == USER_PROCESS:
-            print(
-                "  \033[1;31m%-10s\033[m from %-25s at %-20s"
-                % (b.ut_user, b.ut_host, time.ctime(b.ut_tv[0]))
-            )
-    a.endutent()
+    if users != "":
+        print(
+            f"""
+   Logged in users: {users}
+"""
+        )
 
 sys.exit(0)
