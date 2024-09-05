@@ -62,10 +62,15 @@ Optionally, you can install `needrestart` which is used to show a message if you
 If you don't install `needrestart`, it will work, but you won't be warned about the need for a reboot.
 `needrestart` warns you about services that need to be restarted too (but is slower than `checkrestart` for that, see below).
 
-You can optionnally install `debian-goodies` which provides `checkrestart`, which will be used to warn you about services that need to be restarted. Relying on `needrestart` for that is slow (±7 seconds) while `checkrestart` do it faster (less than one second).
+You can optionally install `debian-goodies` which provides `checkrestart`, which will be used to warn you about services that need to be restarted. Relying on `needrestart` for that is slow (±7 seconds) while `checkrestart` do it faster (less than one second).
 
-Then:
+Check out the repo (to a folder of your choice)
+```
+git clone https://framagit.org/luc/dynamic-motd.git
+cd dynamic-motd/
+```
 
+Then, as `root`:
 ```
 cp -r update-motd.d/ /etc
 rm /etc/motd
