@@ -147,11 +147,11 @@ def main():
     )
 
     print("System load:  %-5.2f                Processes:    %d" % (loadav, processes))
-    print("Memory usage: %-4s                 Swap usage:   %s" % (memperc, SWAPPERC))
+    print("Memory usage: %-7s              Swap usage:   %s" % (memperc, SWAPPERC))
 
     print(
         """
-      Mount points          Disk usage        Inodes usage"""
+   Mount points          Disk usage        Inodes usage"""
     )
 
     for f in filesystems:
