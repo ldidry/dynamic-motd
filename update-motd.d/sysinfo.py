@@ -4,17 +4,18 @@ landscape-sysinfo-mini.py -- a trivial re-implementation of the
 sysinfo printout shown on debian at boot time. No twisted, no reactor, just /proc & utmp
 
 (C) 2014 jw@owncloud.com
+https://github.com/jnweiger/landscape-sysinfo-mini
 
 inspired by ubuntu 14.10 /etc/update-motd.d/50-landscape-sysinfo
-Requires: python3-utmp
-for counting users.
 
 2014-09-07 V1.0 jw, ad hoc writeup, feature-complete. Probably buggy?
 2014-10-08 V1.1 jw, survive without swap
 2014-10-13 V1.2 jw, survive without network
 
 Modified by Luc Didry in 2016 and 2023
-Get the original version at https://github.com/jnweiger/landscape-sysinfo-mini
+https://github.com/ldidry/dynamic-motd
+
+Modified by seven-beep@entreparentheses.xyz in 2024.
 """
 
 
@@ -27,7 +28,7 @@ import time
 
 
 def dev_addr(device):
-    """find the local ip address on the given device"""
+    """Find the local ip address on the given device"""
     if device is None:
         return None
     for l in os.popen("ip route list dev " + device):
@@ -40,7 +41,7 @@ def dev_addr(device):
 
 
 def default_dev():
-    """find the device where our default route is"""
+    """Find the device where our default route is"""
     for l in open("/proc/net/route").readlines():
         a = l.split()
         if a[1] == "00000000":
@@ -49,6 +50,7 @@ def default_dev():
 
 
 def get_users():
+    """Get the users connected on this machine."""
     # Run the who command and capture its output
     who_output_list = subprocess.check_output(["who"]).decode("utf-8").split("\n")
     # Create a set to store unique usernames
@@ -78,6 +80,7 @@ def proc_meminfo():
 
 
 def get_filesystems():
+    """Get the real filesystem information for all entries in /etc/fstab."""
     # Only using fstab values to filter the mess that can be containerisation or bind mounts.
     filesystems = json.loads(
         subprocess.check_output(
