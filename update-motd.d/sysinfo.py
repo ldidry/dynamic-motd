@@ -129,7 +129,7 @@ def main():
 
     print(
         """
-    System information as of %s on %s
+System information as of %s on %s
     """
         % (time.asctime(), ip_addr)
     )
@@ -139,7 +139,7 @@ def main():
 
     print(
         """
-   Mount points          Disk usage        Inodes usage"""
+  Mount points          Disk usage        Inodes usage"""
     )
 
     for f in filesystems:
