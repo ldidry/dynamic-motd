@@ -6,7 +6,7 @@ sysinfo printout shown on debian at boot time. No twisted, no reactor, just /pro
 (C) 2014 jw@owncloud.com
 
 inspired by ubuntu 14.10 /etc/update-motd.d/50-landscape-sysinfo
-Requires: python3-utmp 
+Requires: python3-utmp
 for counting users.
 
 2014-09-07 V1.0 jw, ad hoc writeup, feature-complete. Probably buggy?
@@ -18,23 +18,30 @@ Get the original version at https://github.com/jnweiger/landscape-sysinfo-mini
 """
 
 
-import sys
-import os
-import time
 import glob
-import utmp  # type: ignore
+import os
+import subprocess
+import sys
+import time
 
-VERSION = '1.3'
 
-def utmp_count():
-    """ Count user processes
-    """
-    u_r = utmp.UtmpRecord()
-    l_users = 0
-    for i in u_r:
-        if i.ut_type == utmp.USER_PROCESS:
-            l_users += 1
-    return l_users
+def get_users():
+    # Run the who command and capture its output
+    who_output_list = subprocess.check_output(["who"]).decode("utf-8").split("\n")
+    # Create a set to store unique usernames
+    unique_users = set()
+
+    # Iterate through each line and extract usernames
+    for line in who_output_list:
+        line_list = line.split()
+        if bool(line_list):
+            unique_users.add(line_list[0])
+
+    # Join the unique usernames into a single string separated by commas
+    result = ", ".join(unique_users)
+
+    return result
+
 
 def proc_meminfo():
     """ Get memory usage informations
@@ -78,7 +85,7 @@ with open("/proc/loadavg", encoding="ASCII") as avg_line:
 processes = len(glob.glob('/proc/[0-9]*'))
 statfs = proc_mount()
 i_statfs = inode_proc_mount()
-USERS = utmp_count()
+users = get_users()
 meminfo = proc_meminfo()
 memperc = f"{100 - 100. * meminfo['MemAvailable:'] / (meminfo['MemTotal:'] or 1):.2f}%"
 SWAPPERC = f"{100 - 100. * meminfo['SwapFree:'] / (meminfo['SwapTotal:'] or 1):.2f}%"
@@ -99,13 +106,11 @@ print("  Inode Usage:")
 for l in sorted(i_statfs.keys()):
     print(f"    Usage of {l: <24}: {i_statfs[l]: <20}")
 
-if USERS > 0:
-    a = utmp.UtmpRecord()
-    print("\n  Logged in users:")
-    for b in a:
-        if b.ut_type == utmp.USER_PROCESS:
-            print(f"  \033[1;31m{b.ut_user: <10}\033[m from {b.ut_host: <25}"
-                  f" at {time.ctime(b.ut_tv[0]): <20}")
-    a.endutent()
+    if users != "":
+        print(
+            f"""
+   Logged in users: {users}
+"""
+        )
 
 sys.exit(0)
