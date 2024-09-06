@@ -27,26 +27,14 @@ import sys
 import time
 
 
-def dev_addr(device):
+def get_ip_addr():
     """Find the local ip address on the given device"""
-    if device is None:
-        return None
-    for l in os.popen("ip route list dev " + device):
-        seen = ""
-        for a in l.split():
-            if seen == "src":
-                return a
-            seen = a
-    return None
+    ip_output_list = (
+        subprocess.check_output(["hostname", "-I"]).decode("utf-8").split(" ")
+    )
 
-
-def default_dev():
-    """Find the device where our default route is"""
-    for l in open("/proc/net/route").readlines():
-        a = l.split()
-        if a[1] == "00000000":
-            return a[0]
-    return None
+    if bool(ip_output_list):
+        return ip_output_list[0]
 
 
 def get_users():
@@ -125,7 +113,7 @@ def main():
         loadav = float(avg_line.read().split()[1])
     processes = len(glob.glob("/proc/[0-9]*"))
 
-    ip_addr = dev_addr(default_dev())
+    ip_addr = get_ip_addr()
     filesystems = get_filesystems()
     users = get_users()
     meminfo = proc_meminfo()
