@@ -14,23 +14,23 @@ Example:
 
   Debian GNU/Linux 12 (bookworm) (kernel 6.1.0-7-amd64)
 
+System information as of Fri Sep  6 10:26:52 2024 on 192.168.1.20
 
-  System information as of Thu Apr 13 08:43:28 2023
+System load:  0.01                 Processes:    211
+Memory usage: 24.40%               Swap usage:   0.02%
 
-  System load:  2.84                 Processes:           338
-  Memory usage: 81.69%               Users logged in:     1
-  Swap usage:   21.34%
-  Disk Usage:
-    Usage of /                       : 37.0% of 19.18GB
-    Usage of /boot                   : 36.6% of 0.11GB
-    Usage of /home                   : 11.1% of 501.60GB
-  Inode Usage:
-    Usage of /                       : 12.7% of 1286144
-    Usage of /boot                   : 1.1% of 31232
-    Usage of /home                   : 0.1% of 33406976
+  Mount points          Disk usage        Inodes usage
+ /                     18%  of 14G       8.7% of 938400
+ /boot                 8%   of 1.8G      0.0% of 999936
+ /boot/efi             1%   of 974.1M    Not available
+ /opt                  3%   of 4.6G      0.0% of 312624
+ /var                  13%  of 4.6G      1.4% of 312624
+ /var/log              2%   of 4.6G      0.0% of 312624
+ /var/log/audit        0%   of 4.6G      0.0% of 312624
+ /var/tmp              0%   of 4.6G      0.0% of 312624
 
-  Logged in users:
-  user       from laptop.example.org        at Mon Apr  3 09:28:01 2023
+       Logged in users: admin
+
 
 No mail.
 Last login: Mon Apr  3 07:28:01 2023 from laptop.example.org
@@ -55,7 +55,7 @@ sudo apt install ./dynamic-motd_*.deb
 You need to install some packages:
 
 ```
-apt-get install figlet lsb-release python3-utmp bc
+apt-get install figlet lsb-release bc
 ```
 
 Optionally, you can install `needrestart` which is used to show a message if your server need a reboot (main reason (and the only one I know): you have upgraded your kernel).
