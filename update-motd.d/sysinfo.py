@@ -116,43 +116,55 @@ def get_filesystems():
     return filesystems
 
 
-with open("/proc/loadavg", encoding="ASCII") as avg_line:
-    loadav = float(avg_line.read().split()[1])
-processes = len(glob.glob("/proc/[0-9]*"))
+def main():
 
-ip_addr = dev_addr(default_dev())
-filesystems = get_filesystems()
-users = get_users()
-meminfo = proc_meminfo()
-memperc = f"{100 - 100. * meminfo['MemAvailable:'] / (meminfo['MemTotal:'] or 1):.2f}%"
-SWAPPERC = f"{100 - 100. * meminfo['SwapFree:'] / (meminfo['SwapTotal:'] or 1):.2f}%"
+    with open("/proc/loadavg", encoding="ASCII") as avg_line:
+        loadav = float(avg_line.read().split()[1])
+    processes = len(glob.glob("/proc/[0-9]*"))
 
-if meminfo["SwapTotal:"] == 0:
-    SWAPPERC = "---"
-
-print(
-    """
-System information as of %s on %s
-"""
-    % (time.asctime(), ip_addr)
-)
-
-print("System load:  %-5.2f                Processes:    %d" % (loadav, processes))
-print("Memory usage: %-4s                 Swap usage:   %s" % (memperc, SWAPPERC))
-
-print(
-    """
-  Mount points          Disk usage        Inodes usage"""
-)
-
-for f in filesystems:
-    print(" %-21s %-4s of %-9s %s" % (f["target"], f["use%"], f["size"], f["inodes%"]))
-
-if users != "":
-    print(
-        f"""
-   Logged in users: {users}
-"""
+    ip_addr = dev_addr(default_dev())
+    filesystems = get_filesystems()
+    users = get_users()
+    meminfo = proc_meminfo()
+    memperc = (
+        f"{100 - 100. * meminfo['MemAvailable:'] / (meminfo['MemTotal:'] or 1):.2f}%"
+    )
+    SWAPPERC = (
+        f"{100 - 100. * meminfo['SwapFree:'] / (meminfo['SwapTotal:'] or 1):.2f}%"
     )
 
-sys.exit(0)
+    if meminfo["SwapTotal:"] == 0:
+        SWAPPERC = "---"
+
+    print(
+        """
+    System information as of %s on %s
+    """
+        % (time.asctime(), ip_addr)
+    )
+
+    print("System load:  %-5.2f                Processes:    %d" % (loadav, processes))
+    print("Memory usage: %-4s                 Swap usage:   %s" % (memperc, SWAPPERC))
+
+    print(
+        """
+      Mount points          Disk usage        Inodes usage"""
+    )
+
+    for f in filesystems:
+        print(
+            " %-21s %-4s of %-9s %s" % (f["target"], f["use%"], f["size"], f["inodes%"])
+        )
+
+    if users != "":
+        print(
+            f"""
+       Logged in users: {users}
+    """
+        )
+
+    sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()
