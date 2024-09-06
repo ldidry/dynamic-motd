@@ -19,6 +19,7 @@ Get the original version at https://github.com/jnweiger/landscape-sysinfo-mini
 
 
 import glob
+import json
 import os
 import subprocess
 import sys
@@ -66,87 +67,92 @@ def get_users():
 
 
 def proc_meminfo():
-    """ Get memory usage informations
-    """
+    """Get memory usage informations"""
     items = {}
-    for line in open('/proc/meminfo', encoding="ASCII").readlines():  # pylint: disable-msg=R1732
+    for line in open(
+        "/proc/meminfo", encoding="ASCII"
+    ).readlines():  # pylint: disable-msg=R1732
         array = line.split()
         items[array[0]] = int(array[1])
     return items
 
-def proc_mount():
-    """ Get disks space usage
-    """
-    items = {}
-    for mount in open('/proc/mounts', encoding="ASCII").readlines():  # pylint: disable-msg=R1732
-        array = mount.split()
-        if array[0].find('/dev/') == 0:
-            l_statfs = os.statvfs(array[1])
-            perc = 100 - 100. * l_statfs.f_bavail / l_statfs.f_blocks \
-                    if l_statfs.f_blocks != 0 else 100
-            g_b = l_statfs.f_bsize * l_statfs.f_blocks / 1024. / 1024 / 1024
-            items[array[1]] = f"{perc:5.1f}% of {g_b:.2f}GB"
-    return items
 
-def inode_proc_mount():
-    """ Get disks inode usage
-    """
-    items = {}
-    for mount in open('/proc/mounts', encoding="ASCII").readlines():  # pylint: disable-msg=R1732
-        array = mount.split()
-        if array[0].find('/dev/') == 0:
-            l_statfs = os.statvfs(array[1])
-            perc = 100 - 100. * l_statfs.f_ffree / l_statfs.f_files \
-                    if l_statfs.f_files != 0 else 100
-            i_total = l_statfs.f_files
-            items[array[1]] = f"{perc:5.1f}% of {i_total}"
-    return items
+def get_filesystems():
+    # Only using fstab values to filter the mess that can be containerisation or bind mounts.
+    filesystems = json.loads(
+        subprocess.check_output(
+            [
+                "findmnt",
+                "--noheading",
+                "--real",
+                "--uniq",
+                "--fstab",
+                "--json",
+                "--types",
+                "notmpfs,noswap",
+                "--df",
+            ]
+        )
+    ).get("filesystems")
 
-<<<<<<< HEAD
+    for f in filesystems:
+        try:
+            statfs = os.statvfs(f["target"])
+
+            perc = (
+                100 - 100.0 * statfs.f_ffree / statfs.f_files
+                if statfs.f_blocks != 0
+                else 100
+            )
+            iTotal = statfs.f_files
+            f["inodes%"] = "%.1f%% of %.2d" % (perc, iTotal)
+        except PermissionError:
+            f["inodes%"] = "Permission Denied"
+        except FileNotFoundError:
+            f["inodes%"] = "File not found"
+        except ZeroDivisionError:
+            f["inodes%"] = "Not available"
+
+    return filesystems
+
+
 with open("/proc/loadavg", encoding="ASCII") as avg_line:
     loadav = float(avg_line.read().split()[1])
-processes = len(glob.glob('/proc/[0-9]*'))
-=======
+processes = len(glob.glob("/proc/[0-9]*"))
 
 ip_addr = dev_addr(default_dev())
->>>>>>> 5fa57c4 (Restore ip address)
-statfs = proc_mount()
-i_statfs = inode_proc_mount()
+filesystems = get_filesystems()
 users = get_users()
 meminfo = proc_meminfo()
 memperc = f"{100 - 100. * meminfo['MemAvailable:'] / (meminfo['MemTotal:'] or 1):.2f}%"
 SWAPPERC = f"{100 - 100. * meminfo['SwapFree:'] / (meminfo['SwapTotal:'] or 1):.2f}%"
 
-if meminfo['SwapTotal:'] == 0:
-    SWAPPERC = '---'
+if meminfo["SwapTotal:"] == 0:
+    SWAPPERC = "---"
 
-<<<<<<< HEAD
-print(f"  System information as of {time.asctime()}\n")
-print(f"  System load:  {loadav: <5.2f}                Processes:           {processes}")
-print(f"  Memory usage: {memperc: <4}               Users logged in:     {USERS}")
-print(f"  Swap usage:   {SWAPPERC}")
-=======
 print(
     """
 System information as of %s on %s
 """
     % (time.asctime(), ip_addr)
 )
->>>>>>> 5fa57c4 (Restore ip address)
 
-print("  Disk Usage:")
-for k in sorted(statfs.keys()):
-    print(f"    Usage of {k: <24}: {statfs[k]: <20}")
+print("System load:  %-5.2f                Processes:    %d" % (loadav, processes))
+print("Memory usage: %-4s                 Swap usage:   %s" % (memperc, SWAPPERC))
 
-print("  Inode Usage:")
-for l in sorted(i_statfs.keys()):
-    print(f"    Usage of {l: <24}: {i_statfs[l]: <20}")
+print(
+    """
+  Mount points          Disk usage        Inodes usage"""
+)
 
-    if users != "":
-        print(
-            f"""
+for f in filesystems:
+    print(" %-21s %-4s of %-9s %s" % (f["target"], f["use%"], f["size"], f["inodes%"]))
+
+if users != "":
+    print(
+        f"""
    Logged in users: {users}
 """
-        )
+    )
 
 sys.exit(0)
