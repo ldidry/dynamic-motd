@@ -5,5 +5,5 @@ CURRENT_DIR=$(dirname "$0")
 . "$CURRENT_DIR/colors"
 
 if [ -e /var/run/reboot-required ]; then
-    printf "%b  Pending kernel upgrade! %bYou should consider rebooting your machine.\n\n" "$LIGHT_RED" "$NONE"
+    printf "%b  Reboot required by specific packages updates! %bYou should consider restarting your machine.\n\n" "$LIGHT_RED" "$NONE"
 fi

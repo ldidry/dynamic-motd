@@ -14,23 +14,27 @@ Example:
 
   Debian GNU/Linux 12 (bookworm) (kernel 6.1.0-7-amd64)
 
+System information as of Wed Jan 22 16:02:47 2025
 
-  System information as of Thu Apr 13 08:43:28 2023
+System load:  0.07                 Processes:    245
+Memory usage: 26%                  Swap usage:   1%
 
-  System load:  2.84                 Processes:           338
-  Memory usage: 81.69%               Users logged in:     1
-  Swap usage:   21.34%
-  Disk Usage:
-    Usage of /                       : 37.0% of 19.18GB
-    Usage of /boot                   : 36.6% of 0.11GB
-    Usage of /home                   : 11.1% of 501.60GB
-  Inode Usage:
-    Usage of /                       : 12.7% of 1286144
-    Usage of /boot                   : 1.1% of 31232
-    Usage of /home                   : 0.1% of 33406976
+  Mount points                        Disk usage        Inodes usage
+ /                                   13%  of 19.6G     5.0% of 1310720
+ /boot                               12%  of 977.3M    0.5% of 65808
+ /var                                43%  of 19.6G     16.6% of 1310720
+ /home                               1%   of 7.8G      1.3% of 524288
+ /var/log                            2%   of 7.8G      0.0% of 524288
+ /var/tmp                            0%   of 4.8G      0.0% of 327680
+ /boot/efi                           0%   of 250.1M    Not available
+ /var/log/audit                      0%   of 7.8G      0.0% of 524288
+ /srv/borg                           0%   of 1.3T      0.0% of 85901312
+ /srv/nextcloud                      13%  of 3T        0.0% of 201326592
+ /mnt/disquette                      78%  of 1.2T      0.1% of 82378752
 
-  Logged in users:
-  user       from laptop.example.org        at Mon Apr  3 09:28:01 2023
+  2 logged in users:
+  user       from x.x.x.x                   at Tue Jan 21 22:43:37 2025
+  user       from x.x.x.x                   at Tue Jan 21 22:43:37 2025
 
 No mail.
 Last login: Mon Apr  3 07:28:01 2023 from laptop.example.org
@@ -55,7 +59,7 @@ sudo apt install ./dynamic-motd_*.deb
 You need to install some packages:
 
 ```
-apt-get install figlet lsb-release python3-utmp bc
+apt-get install figlet lsb-release bc python3-utmp
 ```
 
 Optionally, you can install `needrestart` which is used to show a message if your server need a reboot (main reason (and the only one I know): you have upgraded your kernel).
